@@ -89,6 +89,13 @@ class RenderObjectManager {
 
   /// Sets the position of the RenderBox.
   void setOffset(double x, double y) {
+    // Validate input values to prevent NaN
+    if (!x.isFinite || !y.isFinite) {
+      // Use zero as fallback for invalid values
+      x = 0.0;
+      y = 0.0;
+    }
+    
     xOffset = x;
     yOffset = y;
     final parentData = customRenderBox.parentData;

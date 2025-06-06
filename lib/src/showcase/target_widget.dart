@@ -34,6 +34,7 @@ class TargetWidget extends StatelessWidget {
     required this.offset,
     required this.size,
     required this.shapeBorder,
+    required this.targetShapeColor,
     required this.targetPadding,
     this.onTap,
     this.radius,
@@ -61,6 +62,8 @@ class TargetWidget extends StatelessWidget {
   /// The shape of the target highlight.
   final ShapeBorder shapeBorder;
 
+  final Color? targetShapeColor;
+
   /// Border radius when using a rectangular shape.
   final BorderRadius? radius;
 
@@ -87,7 +90,10 @@ class TargetWidget extends StatelessWidget {
         decoration: ShapeDecoration(
           shape: radius == null
               ? shapeBorder
-              : RoundedRectangleBorder(borderRadius: radius!),
+              : RoundedRectangleBorder(
+                  borderRadius: radius!,
+                  side: BorderSide(color: targetShapeColor ?? Colors.transparent, width: 2),
+                ),
         ),
       ),
     );

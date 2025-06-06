@@ -11,6 +11,7 @@ import 'render_object_manager.dart';
 
 part 'animated_tooltip_layout.dart';
 part 'arrow_painter.dart';
+part 'line_painter.dart';
 part 'render_animation_delegate.dart';
 part 'render_position_delegate.dart';
 part 'tooltip_layout_widget.dart';

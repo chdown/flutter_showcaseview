@@ -42,6 +42,7 @@ class _RenderPositionDelegate extends RenderBox
   /// action buttons
   /// [screenEdgePadding] - Minimum padding from screen edges
   /// [targetPadding] - Padding around the target
+  /// [actionBoxOffset] - Additional offset for action box positioning
   _RenderPositionDelegate({
     required this.targetPosition,
     required this.targetSize,
@@ -55,6 +56,7 @@ class _RenderPositionDelegate extends RenderBox
     required this.targetPadding,
     required this.showcaseOffset,
     required this.targetTooltipGap,
+    required this.actionBoxOffset,
   });
 
   // Core positioning parameters
@@ -69,6 +71,7 @@ class _RenderPositionDelegate extends RenderBox
   double screenEdgePadding;
   EdgeInsets targetPadding;
   double targetTooltipGap;
+  Offset actionBoxOffset;
 
   /// This is used when there is some space around showcaseview as this widget
   /// implementation works in global coordinate system so because of that we
@@ -718,15 +721,19 @@ class _RenderPositionDelegate extends RenderBox
       ),
     );
 
-    // Position the action box differently based on tooltip direction
-    TooltipLayoutSlot.actionBox.getObjectManager?.layoutParentData.offset =
-        Offset(
-      _xOffset,
-      tooltipPosition.isTop
+    // Calculate base position for action box based on tooltip direction
+    final baseX = _xOffset;
+    final baseY = tooltipPosition.isTop
           // For top tooltips, action box goes above content
           ? _yOffset - _actionBoxSize.height - gapBetweenContentAndAction
           // For other positions, action box goes below content
-          : _yOffset + _toolTipBoxSize.height + gapBetweenContentAndAction,
+        : _yOffset + _toolTipBoxSize.height + gapBetweenContentAndAction;
+
+    // Apply additional offset from TooltipActionConfig
+    TooltipLayoutSlot.actionBox.getObjectManager?.layoutParentData.offset =
+        Offset(
+      baseX + actionBoxOffset.dx,
+      baseY + actionBoxOffset.dy,
     );
   }
 

@@ -45,6 +45,8 @@ class ToolTipWidget extends StatefulWidget {
     required this.descTextStyle,
     required this.container,
     required this.tooltipBackgroundColor,
+    this.tooltipChildren,
+    this.arrowOffsetX,
     required this.textColor,
     required this.showArrow,
     required this.onTooltipTap,
@@ -85,6 +87,8 @@ class ToolTipWidget extends StatefulWidget {
   final TextStyle? descTextStyle;
   final Widget? container;
   final Color? tooltipBackgroundColor;
+  final Widget? tooltipChildren;
+  final double? arrowOffsetX;
   final Color? textColor;
   final bool showArrow;
   final VoidCallback? onTooltipTap;
@@ -187,48 +191,53 @@ class _ToolTipWidgetState extends State<ToolTipWidget>
                 onTap: widget.onTooltipTap,
                 child: Container(
                   padding: widget.tooltipPadding?.copyWith(left: 0, right: 0),
-                  color: widget.tooltipBackgroundColor,
+                  color: widget.tooltipChildren == null ? widget.tooltipBackgroundColor : null,
+                  // child: widget.tooltipChildren ?? Column(
+                  // color: widget.tooltipBackgroundColor,
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: <Widget>[
-                      if (widget.title case final title?)
-                        DefaultTooltipTextWidget(
-                          padding: (widget.titlePadding ?? EdgeInsets.zero).add(
-                            EdgeInsets.only(
-                              left: widget.tooltipPadding?.left ?? 0,
-                              right: widget.tooltipPadding?.right ?? 0,
+                      if (widget.tooltipChildren != null) widget.tooltipChildren!,
+                      if (widget.tooltipChildren == null) ...[
+                        if (widget.title case final title?)
+                          DefaultTooltipTextWidget(
+                            padding: (widget.titlePadding ?? EdgeInsets.zero).add(
+                              EdgeInsets.only(
+                                left: widget.tooltipPadding?.left ?? 0,
+                                right: widget.tooltipPadding?.right ?? 0,
+                              ),
                             ),
+                            text: title,
+                            textAlign: widget.titleTextAlign,
+                            alignment: widget.titleAlignment,
+                            textColor: widget.textColor,
+                            textDirection: widget.titleTextDirection,
+                            textStyle: widget.titleTextStyle ??
+                                Theme.of(context).textTheme.titleLarge?.merge(
+                                  TextStyle(color: widget.textColor),
+                                ),
                           ),
-                          text: title,
-                          textAlign: widget.titleTextAlign,
-                          alignment: widget.titleAlignment,
-                          textColor: widget.textColor,
-                          textDirection: widget.titleTextDirection,
-                          textStyle: widget.titleTextStyle ??
-                              Theme.of(context).textTheme.titleLarge?.merge(
-                                    TextStyle(color: widget.textColor),
-                                  ),
-                        ),
-                      if (widget.description case final desc?)
-                        DefaultTooltipTextWidget(
-                          padding:
-                              (widget.descriptionPadding ?? EdgeInsets.zero)
-                                  .add(
-                            EdgeInsets.only(
-                              left: widget.tooltipPadding?.left ?? 0,
-                              right: widget.tooltipPadding?.right ?? 0,
+                        if (widget.description case final desc?)
+                          DefaultTooltipTextWidget(
+                            padding:
+                            (widget.descriptionPadding ?? EdgeInsets.zero)
+                                .add(
+                              EdgeInsets.only(
+                                left: widget.tooltipPadding?.left ?? 0,
+                                right: widget.tooltipPadding?.right ?? 0,
+                              ),
                             ),
+                            text: desc,
+                            textAlign: widget.descriptionTextAlign,
+                            alignment: widget.descriptionAlignment,
+                            textColor: widget.textColor,
+                            textDirection: widget.descriptionTextDirection,
+                            textStyle: widget.descTextStyle ??
+                                Theme.of(context).textTheme.titleSmall?.merge(
+                                  TextStyle(color: widget.textColor),
+                                ),
                           ),
-                          text: desc,
-                          textAlign: widget.descriptionTextAlign,
-                          alignment: widget.descriptionAlignment,
-                          textColor: widget.textColor,
-                          textDirection: widget.descriptionTextDirection,
-                          textStyle: widget.descTextStyle ??
-                              Theme.of(context).textTheme.titleSmall?.merge(
-                                    TextStyle(color: widget.textColor),
-                                  ),
-                        ),
+                      ],
                       if (widget.tooltipActions.isNotEmpty &&
                           widget.tooltipActionConfig.position.isInside)
                         ActionWidget(
@@ -275,6 +284,7 @@ class _ToolTipWidgetState extends State<ToolTipWidget>
                 ?.localToGlobal(Offset.zero) ??
             Offset.zero,
         targetTooltipGap: widget.targetTooltipGap,
+        actionBoxOffset: widget.tooltipActionConfig.actionBoxOffset,
         children: [
           _TooltipLayoutId(
             id: TooltipLayoutSlot.tooltipBox,
@@ -297,7 +307,11 @@ class _ToolTipWidgetState extends State<ToolTipWidget>
             _TooltipLayoutId(
               id: TooltipLayoutSlot.arrow,
               child: CustomPaint(
-                painter: _Arrow(strokeColor: widget.tooltipBackgroundColor!),
+                painter: _ArrowLine(
+                  strokeColor: widget.tooltipBackgroundColor!,
+                  targetTooltipGap: widget.targetTooltipGap,
+                  arrowOffsetX: widget.arrowOffsetX ?? 0,
+                ),
                 size: const Size(Constants.arrowWidth, Constants.arrowHeight),
               ),
             ),

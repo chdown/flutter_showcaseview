@@ -71,11 +71,14 @@ class Showcase extends StatefulWidget {
     this.targetShapeBorder = const RoundedRectangleBorder(
       borderRadius: BorderRadius.all(Radius.circular(8)),
     ),
+    this.targetShapeColor,
     this.overlayColor = Colors.black45,
     this.overlayOpacity = 0.75,
     this.titleTextStyle,
     this.descTextStyle,
     this.tooltipBackgroundColor = Colors.white,
+    this.tooltipChildren,
+    this.arrowOffsetX,
     this.textColor = Colors.black,
     this.scrollLoadingWidget = Constants.defaultProgressIndicator,
     this.showArrow = true,
@@ -178,6 +181,8 @@ class Showcase extends StatefulWidget {
     required this.child,
     this.floatingActionWidget,
     this.targetShapeBorder = Constants.defaultTargetShapeBorder,
+    this.targetShapeColor,
+    this.arrowOffsetX,
     this.overlayColor = Colors.black45,
     this.targetBorderRadius,
     this.overlayOpacity = 0.75,
@@ -216,6 +221,7 @@ class Showcase extends StatefulWidget {
         titleTextStyle = null,
         descTextStyle = null,
         tooltipBackgroundColor = Colors.white,
+        tooltipChildren = null,
         textColor = Colors.black,
         tooltipBorderRadius = null,
         tooltipPadding = const EdgeInsets.symmetric(vertical: 8),
@@ -275,6 +281,8 @@ class Showcase extends StatefulWidget {
   /// ```
   final ShapeBorder targetShapeBorder;
 
+  final Color? targetShapeColor;
+
   /// Radius of rectangle box while target widget is being showcased.
   ///
   /// Default value is:
@@ -318,6 +326,10 @@ class Showcase extends StatefulWidget {
   ///
   /// Default to [Colors.white]
   final Color tooltipBackgroundColor;
+
+  final Widget? tooltipChildren;
+
+  final double? arrowOffsetX;
 
   /// Defines text color of default tooltip when [titleTextStyle] and
   /// [descTextStyle] is not provided.

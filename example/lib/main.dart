@@ -40,6 +40,7 @@ class _MailPageState extends State<MailPage> {
   final GlobalKey _two = GlobalKey();
   final GlobalKey _three = GlobalKey();
   final GlobalKey _four = GlobalKey();
+  final GlobalKey _five = GlobalKey();
   List<Mail> mails = [];
 
   final scrollController = ScrollController();
@@ -51,6 +52,7 @@ class _MailPageState extends State<MailPage> {
     // This is alternative of ShowCaseWidget register all the configuration here which are in ShowCaseWidget.
     // if we don't register the ShowcaseView then showcase functionality will not work.
     ShowcaseView.register(
+      disableMovingAnimation: true,
       hideFloatingActionWidgetForShowcase: [_lastShowcaseWidget],
       globalFloatingActionWidget: (showcaseContext) => FloatingActionWidget(
         left: 16,
@@ -119,8 +121,7 @@ class _MailPageState extends State<MailPage> {
     );
     //Start showcase view after current widget frames are drawn.
     WidgetsBinding.instance.addPostFrameCallback(
-      (_) => ShowcaseView.get().startShowCase(
-          [_firstShowcaseWidget, _two, _three, _four, _lastShowcaseWidget]),
+      (_) => ShowcaseView.get().startShowCase([_firstShowcaseWidget, _two, _three, _four, _lastShowcaseWidget]),
     );
     mails = [
       Mail(
@@ -231,6 +232,8 @@ class _MailPageState extends State<MailPage> {
                                   children: <Widget>[
                                     Showcase(
                                       key: _firstShowcaseWidget,
+                                      targetTooltipGap: 60,
+                                      // tooltipChildren: Text("111111111111111"),
                                       description: 'Tap to see menu options',
                                       onBarrierClick: () {
                                         debugPrint('Barrier clicked');
@@ -238,21 +241,37 @@ class _MailPageState extends State<MailPage> {
                                           'Floating Action widget for first '
                                           'showcase is now hidden',
                                         );
-                                        ShowcaseView.get()
-                                            .hideFloatingActionWidgetForKeys([
-                                          _firstShowcaseWidget,
-                                          _lastShowcaseWidget
-                                        ]);
+                                        ShowcaseView.get().hideFloatingActionWidgetForKeys([_firstShowcaseWidget, _lastShowcaseWidget]);
                                       },
-                                      tooltipActionConfig:
-                                          const TooltipActionConfig(
+                                      tooltipActionConfig: const TooltipActionConfig(
                                         alignment: MainAxisAlignment.end,
                                         position: TooltipActionPosition.outside,
                                         gapBetweenContentAndAction: 10,
                                       ),
+                                      tooltipActions: [
+                                        TooltipActionButton(
+                                          type: TooltipDefaultActionType.skip,
+                                          backgroundColor: Colors.transparent,
+                                          name: "Skip",
+                                          textStyle: TextStyle(color: Colors.white, fontSize: 16),
+                                          border: Border.all(color: Colors.white, width: 1),
+                                          onTap: () {
+                                            debugPrint('menu button clicked');
+                                          },
+                                        ),
+                                        TooltipActionButton(
+                                          type: TooltipDefaultActionType.next,
+                                          backgroundColor: Colors.transparent,
+                                          name: "Next",
+                                          textStyle: TextStyle(color: Colors.white, fontSize: 16),
+                                          border: Border.all(color: Colors.white, width: 1),
+                                          onTap: () {
+                                            debugPrint('menu button clicked');
+                                          },
+                                        ),
+                                      ],
                                       child: GestureDetector(
-                                        onTap: () =>
-                                            debugPrint('menu button clicked'),
+                                        onTap: () => debugPrint('menu button clicked'),
                                         child: Icon(
                                           Icons.menu,
                                           color: Theme.of(context).primaryColor,
@@ -287,10 +306,10 @@ class _MailPageState extends State<MailPage> {
                       targetPadding: const EdgeInsets.all(5),
                       key: _two,
                       title: 'Profile',
-                      description:
-                          "Tap to see profile which contains user's name, profile picture, mobile number and country",
+                      description: "Tap to see profile which contains user's name, profile picture, mobile number and country",
                       tooltipBackgroundColor: Theme.of(context).primaryColor,
                       textColor: Colors.white,
+                      targetTooltipGap: 60,
                       floatingActionWidget: FloatingActionWidget(
                         left: 16,
                         bottom: 16,
@@ -391,7 +410,17 @@ class _MailPageState extends State<MailPage> {
         title: 'Compose Mail',
         description: 'Click here to compose mail',
         targetBorderRadius: const BorderRadius.all(Radius.circular(16)),
-        showArrow: false,
+        showArrow: true,
+        targetTooltipGap: 60,
+        toolTipMargin: 0,
+        tooltipPosition: TooltipPosition.bottom,
+        tooltipActionConfig: const TooltipActionConfig(
+          alignment: MainAxisAlignment.end,
+          position: TooltipActionPosition.outside,
+          gapBetweenContentAndAction: 10,
+          actionBoxOffset: Offset(-120, 140)
+          // actionGap: 30,
+        ),
         tooltipActions: [
           TooltipActionButton(
               type: TooltipDefaultActionType.previous,
@@ -444,8 +473,7 @@ class _MailPageState extends State<MailPage> {
     );
   }
 
-  GestureDetector showcaseMailTile(GlobalKey<State<StatefulWidget>> key,
-      bool showCaseDetail, BuildContext context, Mail mail) {
+  GestureDetector showcaseMailTile(GlobalKey<State<StatefulWidget>> key, bool showCaseDetail, BuildContext context, Mail mail) {
     return GestureDetector(
       onTap: () {
         Navigator.push<void>(
@@ -571,12 +599,7 @@ class Mail {
 }
 
 class MailTile extends StatelessWidget {
-  const MailTile(
-      {required this.mail,
-      this.showCaseDetail = false,
-      this.showCaseKey,
-      Key? key})
-      : super(key: key);
+  const MailTile({required this.mail, this.showCaseDetail = false, this.showCaseKey, Key? key}) : super(key: key);
   final bool showCaseDetail;
   final GlobalKey<State<StatefulWidget>>? showCaseKey;
   final Mail mail;
@@ -675,9 +698,7 @@ class MailTile extends StatelessWidget {
                         mail.sender,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
-                          fontWeight: mail.isUnread
-                              ? FontWeight.bold
-                              : FontWeight.normal,
+                          fontWeight: mail.isUnread ? FontWeight.bold : FontWeight.normal,
                           fontSize: 17,
                         ),
                       ),
@@ -694,9 +715,7 @@ class MailTile extends StatelessWidget {
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
                           fontWeight: FontWeight.normal,
-                          color: mail.isUnread
-                              ? Theme.of(context).primaryColor
-                              : Colors.black,
+                          color: mail.isUnread ? Theme.of(context).primaryColor : Colors.black,
                           fontSize: 15,
                         ),
                       ),

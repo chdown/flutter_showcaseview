@@ -35,6 +35,7 @@ class TooltipActionConfig {
     this.gapBetweenContentAndAction = 10,
     this.crossAxisAlignment = CrossAxisAlignment.start,
     this.textBaseline,
+    this.actionBoxOffset = Offset.zero,
   }) : assert(
           crossAxisAlignment != CrossAxisAlignment.stretch,
           'Can not use stretch as height is unbounded',
@@ -59,4 +60,8 @@ class TooltipActionConfig {
   /// If aligning items according to their baseline, which baseline to use.
   /// This must be set if using baseline alignment.
   final TextBaseline? textBaseline;
+
+  /// Defines the offset for the action box position.
+  /// This allows fine-tuning the action box placement relative to its default position.
+  final Offset actionBoxOffset;
 }

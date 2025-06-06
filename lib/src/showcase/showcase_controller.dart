@@ -305,6 +305,7 @@ class ShowcaseController {
               onDoubleTap: config.onTargetDoubleTap,
               onLongPress: config.onTargetLongPress,
               shapeBorder: config.targetShapeBorder,
+              targetShapeColor: config.targetShapeColor,
               disableDefaultChildGestures: config.disableDefaultTargetGestures,
               targetPadding: config.targetPadding,
             ),
@@ -320,6 +321,8 @@ class ShowcaseController {
               descTextStyle: config.descTextStyle,
               container: config.container,
               tooltipBackgroundColor: config.tooltipBackgroundColor,
+              tooltipChildren: config.tooltipChildren,
+              arrowOffsetX: config.arrowOffsetX,
               textColor: config.textColor,
               showArrow: config.showArrow,
               onTooltipTap: config.disposeOnTap ?? config.onToolTipClick != null
